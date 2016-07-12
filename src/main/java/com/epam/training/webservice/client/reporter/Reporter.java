@@ -29,11 +29,10 @@ public final class Reporter {
         return reporter.toString();
     }
 
-    public static String buyTicket(boolean resultByuing, List<Ticket> ticketsInSystem) {
+    public static String buyTicket(List<Ticket> ticketsInSystem) {
         StringBuilder reporter = new StringBuilder();
         reporter.append("Buy ticket\n");
         reporter.append("------------------------------------------------------------------------------------------\n");
-        reporter.append("Result buying ticket is " + resultByuing + "\n");
         reporter.append(Reporter.getAllTicket(ticketsInSystem, "TICKET IN THE SYSTEM"));
         reporter.append("------------------------------------------------------------------------------------------\n");
         return reporter.toString();
@@ -49,11 +48,10 @@ public final class Reporter {
         return reporter.toString();
     }
 
-    public static String returnTicket(boolean resultOperation, List<Ticket> ticketInSystem, List<Ticket> freeTickets) {
+    public static String returnTicket(List<Ticket> ticketInSystem, List<Ticket> freeTickets) {
         StringBuilder reporter = new StringBuilder();
         reporter.append("Return ticket\n");
         reporter.append("------------------------------------------------------------------------------------------\n");
-        reporter.append("Result return ticket is " + resultOperation + "\n");
         reporter.append(Reporter.getAllTicket(freeTickets, "ALL FREE"));
         reporter.append(Reporter.getAllTicket(ticketInSystem, "TICKET IN THE SYSTEM"));
         reporter.append("------------------------------------------------------------------------------------------\n");

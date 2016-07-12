@@ -46,7 +46,7 @@ public class MemoryTicketDaoImpl implements TicketDao {
 
     @Override
     public void addTicket(Ticket ticket) {
-        tickets.put(new Random().nextInt(), ticket);
+        tickets.put(ticket.getId(), ticket);
         ticket.setState(StateTicket.FREE);
         ticket.setPerson(null);
     }
