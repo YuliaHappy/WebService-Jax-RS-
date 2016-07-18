@@ -7,10 +7,7 @@ import com.epam.training.webservice.server.dao.TicketDao;
 import com.epam.training.webservice.common.domains.Person;
 import com.epam.training.webservice.server.dao.impl.MemoryTicketDaoImpl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TicketService {
     private TicketDao ticketDao = new MemoryTicketDaoImpl();
@@ -29,7 +26,7 @@ public class TicketService {
     }
 
     public List<Ticket> getAll() {
-        return ticketDao.getAll();
+        return Collections.unmodifiableList(ticketDao.getAll());
     }
 
     public void putTicket(Ticket ticket) {
@@ -44,22 +41,23 @@ public class TicketService {
         return new ArrayList<>(processedTickets.values());
     }
 
-    public void buyTicket(int numberTicket) throws BookingException {
+    public Ticket buyTicket(int numberTicket) throws BookingException {
         Ticket ticketInSystem = processedTickets.get(numberTicket);
         if (ticketInSystem != null) {
             if (ticketInSystem.getState() == StateTicket.BOOKED) {
                 ticketInSystem.setState(StateTicket.PAID);
-                return;
+                return ticketInSystem;
             }
             throw new BookingException("State ticket " + ticketInSystem.getState() + " incorret!");
         }
         throw new BookingException("Number ticket " + numberTicket + " incorret!");
     }
 
-    public void returnTicket(int numberTicket) throws BookingException {
+    public Ticket returnTicket(int numberTicket) throws BookingException {
         if (processedTickets.containsKey(numberTicket)) {
-            addTicket(removeTicketByNumber(numberTicket));
-            return;
+            Ticket ticket = removeTicketByNumber(numberTicket);
+            addTicket(ticket);
+            return ticket;
         }
         throw new BookingException("Number ticket " + numberTicket + " incorret!");
     }

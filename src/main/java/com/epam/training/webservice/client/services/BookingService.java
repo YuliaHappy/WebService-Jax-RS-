@@ -4,6 +4,7 @@ import com.epam.training.webservice.common.domains.Person;
 import com.epam.training.webservice.common.domains.Ticket;
 import com.epam.training.webservice.common.exceptions.BookingException;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientResponse;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -19,7 +20,7 @@ public class BookingService {
     private final String ALL_IN_SYSTEM = "http://localhost:8000/RestBookingService/booking/getAllInSystem/";
     private final String BOOK_TICKET = "http://localhost:8000/RestBookingService/booking/bookTicket/";
     private final String GET_BY_NUMBER = "http://localhost:8000/RestBookingService/booking/getByNumber/";
-    private final String BUY_TICKET = "http://localhost:8000/RestBookingService/booking/buyTicket/";
+    private final String BUY_TICKET = "http://localhost:8000/RestBookingService/booking/buyTicket";
     private final String RETURN_TICKET = "http://localhost:8000/RestBookingService/booking/returnTicket/";
 
     public BookingService() {
@@ -56,21 +57,23 @@ public class BookingService {
                 .readEntity(Ticket.class);
     }
 
-    public void buyTicket(int numberTicket) throws BookingException {
-        Response response = client.target(BUY_TICKET + numberTicket)
+    public Ticket buyTicket(Ticket ticket) throws BookingException {
+        Response response = client.target(BUY_TICKET)
                 .request()
-                .get();
+                .put(Entity.entity(ticket, MediaType.APPLICATION_XML));
         if (response.getStatus() == 400) {
             throw new BookingException(response.readEntity(String.class));
         }
+        return response.readEntity(Ticket.class);
     }
 
-    public void returnTicket(int numberTicket) throws BookingException {
+    public Ticket returnTicket(int numberTicket) throws BookingException {
         Response response = client.target(RETURN_TICKET + numberTicket)
-                .request()
-                .get();
+                .request(MediaType.APPLICATION_XML)
+                .delete();
         if (response.getStatus() == 400) {
             throw new BookingException(response.readEntity(String.class));
         }
+        return response.readEntity(Ticket.class);
     }
 }

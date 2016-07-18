@@ -28,7 +28,7 @@ public class BookingClient {
 
         System.out.println("True buy");
         try {
-            bookingService.buyTicket(bookTicket.getNumberBook());
+            bookingService.buyTicket(bookTicket);
         } catch (BookingException e) {
             e.printStackTrace();
         }
@@ -36,7 +36,7 @@ public class BookingClient {
         System.out.println(Reporter.buyTicket(ticketsInSystem));
         System.out.println("Bad buy");
         try {
-            bookingService.buyTicket(ticketsInSystem.get(0).getNumberBook());
+            bookingService.buyTicket(ticketsInSystem.get(0));
         } catch (BookingException e) {
             e.printStackTrace();
         }

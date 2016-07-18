@@ -30,11 +30,11 @@ public class BookingService {
         return ticketService.getByNumber(numberTicket);
     }
 
-    @GET
-    @Path("/buyTicket/{numberTicket}")
-    public void buyTicket(@PathParam("numberTicket") int numberTicket) {
+    @PUT
+    @Path("/buyTicket")
+    public Ticket buyTicket(Ticket ticket) {
         try {
-            ticketService.buyTicket(numberTicket);
+            return ticketService.buyTicket(ticket.getNumberBook());
         } catch (BookingException e) {
             throw new WebApplicationException(
                     Response.status(Response.Status.BAD_REQUEST)
@@ -44,11 +44,12 @@ public class BookingService {
         }
     }
 
-    @GET
+    @DELETE
     @Path("/returnTicket/{numberTicket}")
-    public void returnTicket(@PathParam("numberTicket") int numberTicket) {
+    @Produces(MediaType.APPLICATION_XML)
+    public Ticket returnTicket(@PathParam("numberTicket") int numberTicket) {
         try {
-            ticketService.returnTicket(numberTicket);
+            return ticketService.returnTicket(numberTicket);
         } catch (BookingException e) {
             throw new WebApplicationException(
                     Response.status(Response.Status.BAD_REQUEST)
