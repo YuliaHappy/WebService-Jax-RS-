@@ -6,6 +6,9 @@ import com.epam.training.webservice.common.domains.Person;
 import com.epam.training.webservice.common.domains.Ticket;
 import com.epam.training.webservice.common.exceptions.BookingException;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -16,8 +19,10 @@ public class BookingClient {
         List<Ticket> freeTickets = bookingService.getAllFree();
         System.out.println(Reporter.getAllTicket(freeTickets, "ALL FREE"));
 
+        Calendar date = Calendar.getInstance();
+        date.set(2010, 10, 1);
         Ticket bookTicket = bookingService.bookTicket(2,
-                new Person("SSS", "dd", "hjd", new Date(2010, 10, 1)));
+                new Person("SSS", "dd", "hjd", date.getTime()));
         freeTickets = bookingService.getAllFree();
         List<Ticket> ticketsInSystem = bookingService.getAllTicketInSystem();
         System.out.println(Reporter.bookedTicket(bookTicket, freeTickets, ticketsInSystem));
