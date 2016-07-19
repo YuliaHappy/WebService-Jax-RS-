@@ -1,0 +1,6 @@
+# Project specific
+target/
+
+# idea specific
+.idea/
+*.iml
