@@ -2,14 +2,12 @@ package com.epam.training.webservice.server.services;
 
 import com.epam.training.webservice.common.domains.StateTicket;
 import com.epam.training.webservice.common.domains.Ticket;
+import com.epam.training.webservice.common.exceptions.BookingException;
 import com.epam.training.webservice.server.dao.TicketDao;
 import com.epam.training.webservice.common.domains.Person;
 import com.epam.training.webservice.server.dao.impl.MemoryTicketDaoImpl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TicketService {
     private TicketDao ticketDao = new MemoryTicketDaoImpl();
@@ -27,12 +25,8 @@ public class TicketService {
         return ticketDao.saveToSystem(idTicket, person);
     }
 
-    public void addTicket(Ticket ticket) {
-        ticketDao.addTicket(ticket);
-    }
-
     public List<Ticket> getAll() {
-        return ticketDao.getAll();
+        return Collections.unmodifiableList(ticketDao.getAll());
     }
 
     public void putTicket(Ticket ticket) {
@@ -43,32 +37,36 @@ public class TicketService {
         return processedTickets.get(numberTicket);
     }
 
-    public boolean containsTicketNumber(int ticketNumber) {
-        return processedTickets.containsKey(ticketNumber);
-    }
-
-    public Ticket removeTicketByNumber(int ticketNumber) {
-        return processedTickets.remove(ticketNumber);
-    }
-
     public List<Ticket> getAllInSystem() {
         return new ArrayList<>(processedTickets.values());
     }
 
-    public boolean buyTicket(int numberTicket) {
+    public Ticket buyTicket(int numberTicket) throws BookingException {
         Ticket ticketInSystem = processedTickets.get(numberTicket);
-        if (ticketInSystem != null && ticketInSystem.getState() == StateTicket.BOOKED) {
-            ticketInSystem.setState(StateTicket.PAID);
-            return true;
+        if (ticketInSystem != null) {
+            if (ticketInSystem.getState() == StateTicket.BOOKED) {
+                ticketInSystem.setState(StateTicket.PAID);
+                return ticketInSystem;
+            }
+            throw new BookingException("State ticket " + ticketInSystem.getState() + " incorret!");
         }
-        return false;
+        throw new BookingException("Number ticket " + numberTicket + " incorret!");
     }
 
-    public boolean returnTicket(int numberTicket) {
+    public Ticket returnTicket(int numberTicket) throws BookingException {
         if (processedTickets.containsKey(numberTicket)) {
-            addTicket(removeTicketByNumber(numberTicket));
-            return true;
+            Ticket ticket = removeTicketByNumber(numberTicket);
+            addTicket(ticket);
+            return ticket;
         }
-        return false;
+        throw new BookingException("Number ticket " + numberTicket + " incorret!");
+    }
+
+    private void addTicket(Ticket ticket) {
+        ticketDao.addTicket(ticket);
+    }
+
+    private Ticket removeTicketByNumber(int numberTicket) {
+        return processedTickets.remove(numberTicket);
     }
 }
